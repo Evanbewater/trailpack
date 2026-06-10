@@ -1,0 +1,195 @@
+<view class="page-sunlit">
+  <view class="sunlit-bg" aria-hidden="true"></view>
+
+<view class="page-inner container" wx:if="{{pageLoading}}">
+  <view class="skeleton skeleton-lg"></view>
+  <view class="skeleton skeleton-block"></view>
+  <view class="skeleton skeleton-block"></view>
+</view>
+
+<view class="page-inner container" wx:elif="{{trip}}">
+  <text class="title">{{trip.title}}</text>
+  <view class="card"><text class="trip-desc">{{trip.rawDescription}}</text></view>
+
+  <view class="tags">
+    <text class="tag tag-demo" wx:if="{{trip.demoMode}}">演示模式</text>
+    <text class="tag tag-ai" wx:else>AI 模式</text>
+  </view>
+
+  <view class="actions">
+    <button class="btn-secondary mini-btn" bindtap="runParse" loading="{{loading==='parse'}}" disabled="{{!!loading}}">解析路线</button>
+    <button class="btn-primary mini-btn" bindtap="runGenerate" loading="{{loading==='generate'}}" disabled="{{!!loading}}">生成清单</button>
+    <button class="btn-secondary mini-btn share-btn" open-type="share">分享</button>
+  </view>
+  <button class="btn-secondary delete-btn" bindtap="confirmDelete">删除行程</button>
+  <text class="status text-muted" wx:if="{{status}}">{{status}}</text>
+  <text class="text-error" wx:if="{{error}}">{{error}}</text>
+
+  <view class="card thinking" wx:if="{{trip.parseReasoning}}">
+    <view class="thinking-head" bindtap="toggleParseThinking">
+      <text>路线解析思考</text>
+      <text class="text-muted">{{showParseThinking ? '收起' : '展开'}}</text>
+    </view>
+    <text class="thinking-body" wx:if="{{showParseThinking}}">{{trip.parseReasoning}}</text>
+  </view>
+
+  <view class="card" wx:if="{{parsed}}">
+    <view class="section-head">
+      <text class="section-title">路线解析</text>
+      <text class="edit-link" bindtap="toggleEdit">{{editMode ? '取消' : '编辑'}}</text>
+    </view>
+
+    <block wx:if="{{!editMode}}">
+      <view class="grid">
+        <view class="grid-item"><text class="label">类型</text><text>{{parsed.activityType}}</text></view>
+        <view class="grid-item"><text class="label">季节</text><text>{{parsed.season}}</text></view>
+        <view class="grid-item"><text class="label">难度</text><text>{{parsed.difficulty}}</text></view>
+        <view class="grid-item" wx:if="{{parsed.days}}"><text class="label">天数</text><text>{{parsed.days}}天</text></view>
+        <view class="grid-item" wx:if="{{parsed.groupSize}}"><text class="label">人数</text><text>{{parsed.groupSize}}人</text></view>
+        <view class="grid-item" wx:if="{{parsed.maxAltitudeM}}"><text class="label">海拔</text><text>约{{parsed.maxAltitudeM}}m</text></view>
+      </view>
+      <view class="flags">
+        <text class="tag tag-suggest" wx:if="{{parsed.hasSnow}}">有雪</text>
+        <text class="tag tag-suggest" wx:if="{{parsed.overnightCamping}}">露营</text>
+        <text class="tag tag-suggest" wx:if="{{parsed.lightweight}}">轻装</text>
+      </view>
+    </block>
+
+    <block wx:else>
+      <view class="form-row">
+        <text class="label">标题</text>
+        <input class="form-input" value="{{editForm.title}}" data-field="title" bindinput="onEditInput" />
+      </view>
+      <view class="form-row">
+        <text class="label">地区</text>
+        <input class="form-input" value="{{editForm.region}}" data-field="region" bindinput="onEditInput" />
+      </view>
+      <view class="form-row">
+        <text class="label">天数</text>
+        <input class="form-input" type="number" value="{{editForm.days}}" data-field="days" bindinput="onEditNumber" />
+      </view>
+      <view class="form-row">
+        <text class="label">人数</text>
+        <input class="form-input" type="number" value="{{editForm.groupSize}}" data-field="groupSize" bindinput="onEditNumber" />
+      </view>
+      <view class="form-row">
+        <text class="label">海拔(m)</text>
+        <input class="form-input" type="number" value="{{editForm.maxAltitudeM}}" data-field="maxAltitudeM" bindinput="onEditNumber" />
+      </view>
+      <view class="form-row">
+        <text class="label">活动类型</text>
+        <picker mode="selector" range="{{activityTypes}}" value="{{editForm.activityTypeIndex}}" data-field="activityType" bindchange="onEditPicker">
+          <view class="picker-val">{{editForm.activityType}}</view>
+        </picker>
+      </view>
+      <view class="form-row">
+        <text class="label">季节</text>
+        <picker mode="selector" range="{{seasons}}" value="{{editForm.seasonIndex}}" data-field="season" bindchange="onEditPicker">
+          <view class="picker-val">{{editForm.season}}</view>
+        </picker>
+      </view>
+      <view class="form-row">
+        <text class="label">难度</text>
+        <picker mode="selector" range="{{difficulties}}" value="{{editForm.difficultyIndex}}" data-field="difficulty" bindchange="onEditPicker">
+          <view class="picker-val">{{editForm.difficulty}}</view>
+        </picker>
+      </view>
+      <view class="form-row switch-row">
+        <text class="label">有雪/冰雪</text>
+        <switch checked="{{editForm.hasSnow}}" data-field="hasSnow" bindchange="onEditSwitch" color="#d4a017" />
+      </view>
+      <view class="form-row switch-row">
+        <text class="label">露营过夜</text>
+        <switch checked="{{editForm.overnightCamping}}" data-field="overnightCamping" bindchange="onEditSwitch" color="#d4a017" />
+      </view>
+      <view class="form-row switch-row">
+        <text class="label">轻装</text>
+        <switch checked="{{editForm.lightweight}}" data-field="lightweight" bindchange="onEditSwitch" color="#d4a017" />
+      </view>
+      <button class="btn-primary save-btn" bindtap="saveRoute" loading="{{savingRoute}}">保存并用于下次生成</button>
+    </block>
+  </view>
+
+  <view class="card thinking" wx:if="{{trip.generateReasoning}}">
+    <view class="thinking-head" bindtap="toggleGenThinking">
+      <text>装备生成思考</text>
+      <text class="text-muted">{{showGenThinking ? '收起' : '展开'}}</text>
+    </view>
+    <text class="thinking-body" wx:if="{{showGenThinking}}">{{trip.generateReasoning}}</text>
+  </view>
+
+  <view class="card warn" wx:if="{{trip.riskNotes || weatherSummary}}">
+    <text class="section-title warn-title">风险与天气</text>
+    <text wx:if="{{weatherSummary}}" class="warn-text">{{weatherSummary}}</text>
+    <text wx:if="{{trip.riskNotes}}" class="warn-text">{{trip.riskNotes}}</text>
+  </view>
+
+  <view wx:if="{{checklist}}">
+    <view class="list-head">
+      <text class="section-title">装备清单</text>
+      <picker wx:if="{{versionLabels.length > 1}}" mode="selector" range="{{versionLabels}}" value="{{selectedVersionIndex}}" bindchange="onVersionChange">
+        <text class="version-picker">{{versionLabels[selectedVersionIndex]}} ▾</text>
+      </picker>
+      <text wx:else class="text-muted">v{{checklist.version}}</text>
+    </view>
+
+    <view class="progress-wrap">
+      <view class="progress-bar"><view class="progress-fill" style="width:{{progress}}%"></view></view>
+      <text class="progress-text">打包进度 {{progress}}% · 待准备 {{needCount}} 项 · 已有 {{ownedCount}} 项</text>
+    </view>
+
+    <view class="tabs">
+      <view class="tab-btn {{activeTab === 'list' ? 'active' : ''}}" bindtap="switchTab" data-tab="list">装备</view>
+      <view class="tab-btn {{activeTab === 'team' ? 'active' : ''}}" bindtap="switchTab" data-tab="team">分工</view>
+    </view>
+
+    <view class="filter-tabs" wx:if="{{activeTab === 'list'}}">
+      <text class="filter-btn {{filter === 'all' ? 'active' : ''}}" bindtap="setFilter" data-filter="all">全部</text>
+      <text class="filter-btn {{filter === 'required' ? 'active' : ''}}" bindtap="setFilter" data-filter="required">必需</text>
+      <text class="filter-btn {{filter === 'todo' ? 'active' : ''}}" bindtap="setFilter" data-filter="todo">待准备</text>
+    </view>
+
+    <view class="list-actions">
+      <button class="btn-secondary action-btn" bindtap="goPickGear">从个人装备添加</button>
+      <button class="btn-secondary action-btn" bindtap="copyChecklist">复制清单</button>
+    </view>
+
+    <block wx:if="{{activeTab === 'list'}}">
+      <view wx:for="{{groupedItems}}" wx:key="category" class="category-block">
+        <text class="category-title">{{item.category}}</text>
+        <view class="item-row {{gear.owned ? 'owned-row' : ''}}" wx:for="{{item.items}}" wx:for-item="gear" wx:key="id">
+          <checkbox
+            checked="{{gear.checked}}"
+            bindtap="toggleItem"
+            data-id="{{gear.id}}"
+            data-checked="{{gear.checked}}"
+          />
+          <view class="item-info">
+            <view class="item-name-row">
+              <text class="{{gear.checked ? 'checked' : ''}}">{{gear.name}}</text>
+              <text class="tag {{gear.priority === '必需' ? 'tag-required' : gear.priority === '建议' ? 'tag-suggest' : 'tag-optional'}}">{{gear.priority}}</text>
+              <text class="tag tag-ai" wx:if="{{gear.isShared}}">公共</text>
+              <text class="tag tag-ai" wx:if="{{gear.personalGearId}}">库</text>
+            </view>
+            <text class="item-reason text-muted" wx:if="{{gear.reason}}">{{gear.reason}}</text>
+          </view>
+          <text
+            class="owned-btn {{gear.owned ? 'owned-active' : ''}}"
+            bindtap="toggleOwned"
+            data-id="{{gear.id}}"
+            data-owned="{{gear.owned}}"
+          >已有</text>
+        </view>
+      </view>
+    </block>
+
+    <block wx:if="{{activeTab === 'team'}}">
+      <view wx:if="{{assignments.length === 0}}" class="text-muted">暂无分工数据，请重新生成清单</view>
+      <view class="card team-card" wx:for="{{assignments}}" wx:key="id">
+        <text class="team-role">{{item.roleLabel}}{{item.memberName ? ' · ' + item.memberName : ''}}</text>
+        <text class="team-item" wx:for="{{item.itemNames}}" wx:for-item="name" wx:key="*this">· {{name}}</text>
+      </view>
+    </block>
+  </view>
+</view>
+</view>

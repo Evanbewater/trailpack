@@ -1,0 +1,15 @@
+# 可选：切换到 PostgreSQL 时取消注释并更新 DATABASE_URL
+services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: trailpack
+      POSTGRES_PASSWORD: trailpack
+      POSTGRES_DB: trailpack
+    volumes:
+      - trailpack_pg:/var/lib/postgresql/data
+
+volumes:
+  trailpack_pg:

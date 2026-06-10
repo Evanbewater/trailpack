@@ -1,0 +1,74 @@
+<view class="page page-sunlit page-with-tab">
+  <view class="sunlit-bg" aria-hidden="true"></view>
+
+  <view class="ui-card hero-card glass-sun">
+    <view class="mountain-deco" aria-hidden="true"></view>
+    <view class="badge">
+      <text class="badge-sun">☀</text>
+      <text>晴天出行 · 装备清单</text>
+    </view>
+    <text class="headline">进山前，</text>
+    <text class="headline accent">把装备理清楚</text>
+    <text class="lede">一句话描述路线，读懂山野条件并生成装备清单</text>
+
+    <view class="trail-sign">
+      <text class="sign-label">示例路线</text>
+      <text class="sign-elev">5300</text>
+      <text class="sign-unit">海拔 · 米</text>
+      <view class="sign-rows">
+        <view class="sign-row"><text class="sign-key">天数</text><text>2天1夜</text></view>
+        <view class="sign-row"><text class="sign-key">季节</text><text>11月</text></view>
+        <view class="sign-row"><text class="sign-key">条件</text><text>雪线·轻装</text></view>
+      </view>
+    </view>
+
+    <view class="cta-inline">
+      <button class="btn-primary" bindtap="goNew">开始规划</button>
+      <button class="btn-secondary" bindtap="goList">我的行程</button>
+    </view>
+  </view>
+
+  <view class="workflow-grid">
+    <view class="step-card" wx:for="{{workflow}}" wx:key="label">
+      <view class="step-head">
+        <text class="step-icon">{{item.icon}}</text>
+        <text class="step-marker">步骤 {{index + 1}}</text>
+      </view>
+      <text class="step-label">{{item.label}}</text>
+      <text class="step-desc">{{item.detail}}</text>
+    </view>
+  </view>
+
+  <view class="ui-card">
+    <view class="card-header">
+      <view>
+        <text class="card-title">试试这样说</text>
+        <text class="card-hint">点选真实路线，进入新建行程</text>
+      </view>
+      <text class="card-badge">3 条</text>
+    </view>
+    <view
+      class="example-row"
+      wx:for="{{examples}}"
+      wx:key="*this"
+      bindtap="fillExample"
+      data-text="{{item}}"
+      hover-class="example-row--hover"
+    >
+      <text class="example-text">「{{item}}」</text>
+      <text class="example-action">试用</text>
+    </view>
+  </view>
+
+  <view class="feature-grid">
+    <view class="feature-card" wx:for="{{features}}" wx:key="title">
+      <view class="feature-icon-wrap">
+        <text class="feature-icon">{{item.icon}}</text>
+      </view>
+      <text class="feature-title">{{item.title}}</text>
+      <text class="feature-desc">{{item.desc}}</text>
+    </view>
+  </view>
+
+  <text class="footer text-muted">装备建议仅供参考，请结合官方预警决策</text>
+</view>

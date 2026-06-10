@@ -1,0 +1,55 @@
+<view class="page-sunlit">
+  <view class="sunlit-bg" aria-hidden="true"></view>
+
+  <view class="page-inner container">
+    <text class="page-title">新建行程</text>
+    <text class="subtitle">用自然语言描述路线、季节、人数与特殊路况</text>
+
+    <textarea
+      class="input-area"
+      placeholder="例如：川西四姑娘山二峰冲顶，2天1夜，11月，有雪线，3人轻装"
+      maxlength="2000"
+      value="{{description}}"
+      bindinput="onInput"
+      disabled="{{running}}"
+    />
+
+    <button class="btn-secondary example-btn" bindtap="fillExample" disabled="{{running}}">
+      用示例填充
+    </button>
+
+    <view class="steps card" wx:if="{{started}}">
+      <view class="step" wx:for="{{steps}}" wx:key="key">
+        <view class="step-dot {{item.status}}">{{item.icon}}</view>
+        <text class="step-label">{{item.label}}</text>
+        <text
+          class="step-action"
+          wx:if="{{item.status === 'fail'}}"
+          bindtap="retryStep"
+          data-key="{{item.key}}"
+        >重试</text>
+      </view>
+    </view>
+
+    <button
+      class="btn-primary"
+      bindtap="submit"
+      loading="{{running}}"
+      disabled="{{running}}"
+    >
+      {{running ? '处理中…' : '创建并生成清单'}}
+    </button>
+
+    <button
+      wx:if="{{tripId && failed}}"
+      class="btn-secondary"
+      style="margin-top:16rpx"
+      bindtap="goDetail"
+    >
+      查看已创建行程
+    </button>
+
+    <text class="text-error" wx:if="{{error}}">{{error}}</text>
+    <text class="form-hint">AI 步骤最长等待 120 秒，请保持网络畅通</text>
+  </view>
+</view>

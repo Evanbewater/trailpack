@@ -1,0 +1,4 @@
+{
+  "desc": "Trailpack sitemap",
+  "rules": [{ "action": "allow", "page": "*" }]
+}

@@ -1,0 +1,369 @@
+@import "tailwindcss";
+
+:root {
+  /* 晴天山林 palette */
+  --sunlit: #f7fbf4;
+  --meadow: #e8f5d6;
+  --canopy: #1b4332;
+  --bark: #5c6b5a;
+  --golden: #d4a017;
+  --golden-light: #e6b84a;
+  --sky-clear: #7dd3fc;
+
+  --void: var(--sunlit);
+  --ridge: rgba(255, 252, 245, 0.86);
+  --ridge-solid: #fffdf8;
+  --ridge-light: rgba(255, 252, 245, 0.62);
+  --fog: var(--bark);
+  --mist: #3d5248;
+  --paper: var(--canopy);
+  --forest: #2d6a4f;
+  --forest-light: #40916c;
+  --forest-dark: #1b4332;
+  --sky: var(--sky-clear);
+  --primary: var(--canopy);
+  --primary-light: var(--forest-light);
+  --cta: var(--golden);
+  --cta-dark: #b8860b;
+  --dawn: var(--canopy);
+  --dawn-bright: var(--forest);
+  --ice: #2d6a4f;
+  --line: rgba(255, 255, 255, 0.72);
+  --line-subtle: rgba(27, 67, 50, 0.1);
+  --glass-blur: 18px;
+  --shadow: 0 8px 28px rgba(27, 67, 50, 0.07);
+  --shadow-lg: 0 14px 40px rgba(27, 67, 50, 0.1);
+  --gradient: linear-gradient(145deg, #e6b84a 0%, #d4a017 100%);
+  --sunbeam: linear-gradient(
+    145deg,
+    rgba(230, 184, 74, 0.22) 0%,
+    rgba(255, 252, 245, 0) 42%
+  );
+
+  --background: var(--void);
+  --foreground: var(--paper);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-void: var(--void);
+  --color-ridge: var(--ridge-solid);
+  --color-fog: var(--fog);
+  --color-mist: var(--mist);
+  --color-paper: var(--paper);
+  --color-dawn: var(--dawn);
+  --color-dawn-bright: var(--dawn-bright);
+  --color-ice: var(--ice);
+  --color-primary: var(--primary);
+  --color-cta: var(--cta);
+  --color-forest: var(--forest);
+  --color-forest-light: var(--forest-light);
+  --color-forest-dark: var(--forest-dark);
+  --color-sky: var(--sky);
+  --color-golden: var(--golden);
+  --color-canopy: var(--canopy);
+  --color-meadow: var(--meadow);
+  --color-bark: var(--bark);
+  --font-sans: var(--font-nunito);
+  --font-display: var(--font-fraunces);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--void);
+  color: var(--paper);
+  font-family: var(--font-nunito), "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+code {
+  font-family: var(--font-geist-mono), monospace;
+}
+
+/* ── 晴天山林 · 日照玻璃 ── */
+
+.app-bg {
+  position: relative;
+  min-height: 100%;
+  isolation: isolate;
+}
+
+.app-bg::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: var(--sunlit);
+}
+
+.app-bg::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    repeating-radial-gradient(
+      circle at 68% 22%,
+      transparent 0 44px,
+      rgba(45, 106, 79, 0.035) 45px,
+      transparent 46px
+    ),
+    radial-gradient(ellipse 70% 50% at 0% 0%, rgba(230, 184, 74, 0.28), transparent 58%),
+    radial-gradient(ellipse 45% 35% at 100% 5%, rgba(125, 211, 252, 0.2), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(232, 245, 214, 0.55), transparent 60%);
+}
+
+.glass {
+  background: var(--ridge);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.glass-sun {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-sun::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--sunbeam);
+  border-radius: inherit;
+}
+
+.glass-subtle {
+  background: var(--ridge-light);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+}
+
+.glass-nav {
+  background: rgba(255, 252, 245, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 4px 20px rgba(27, 67, 50, 0.06);
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.mountain-deco {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 88px;
+  pointer-events: none;
+  opacity: 0.45;
+  background: linear-gradient(to top, rgba(45, 106, 79, 0.09), transparent);
+  clip-path: polygon(
+    0% 100%, 0% 60%,
+    8% 42%, 18% 56%,
+    30% 30%, 44% 50%,
+    58% 24%, 72% 44%,
+    86% 32%, 100% 52%,
+    100% 100%
+  );
+}
+
+.trail-sign {
+  background: rgba(255, 252, 245, 0.92);
+  border: 1px solid rgba(212, 160, 23, 0.25);
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 4px 20px rgba(27, 67, 50, 0.08);
+}
+
+.trail-sign-elev {
+  font-family: var(--font-fraunces), "Songti SC", serif;
+  font-size: 2.75rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--canopy);
+}
+
+.trail-sign-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bark);
+}
+
+.text-golden {
+  color: var(--golden);
+}
+
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--forest);
+  background: rgba(232, 245, 214, 0.85);
+  border: 1px solid rgba(45, 106, 79, 0.14);
+}
+
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--golden);
+}
+
+.route-chip {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--forest-dark);
+  padding: 0.375rem 0.625rem;
+  border-radius: 0.5rem;
+  background: rgba(232, 245, 214, 0.7);
+  border: 1px solid rgba(45, 106, 79, 0.12);
+}
+
+.route-chip span {
+  color: var(--bark);
+  font-weight: 400;
+  margin-right: 0.25rem;
+  font-family: var(--font-nunito), sans-serif;
+}
+
+.step-card {
+  background: var(--ridge);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.step-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.step-marker {
+  font-family: var(--font-fraunces), serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--golden);
+}
+
+.example-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.875rem 1rem;
+  border-radius: 0.875rem;
+  border: 1px solid var(--line-subtle);
+  background: rgba(255, 252, 245, 0.55);
+  backdrop-filter: blur(8px);
+  color: var(--mist);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s, color 0.2s;
+}
+
+.example-pill:hover {
+  border-color: rgba(212, 160, 23, 0.35);
+  background: rgba(255, 252, 245, 0.9);
+  box-shadow: var(--shadow);
+  color: var(--paper);
+}
+
+.example-pill:focus-visible {
+  outline: 2px solid var(--golden);
+  outline-offset: 2px;
+}
+
+.feature-card {
+  background: var(--ridge);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  padding: 1.25rem;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.2s;
+}
+
+.feature-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.feature-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  color: var(--forest);
+  background: rgba(232, 245, 214, 0.9);
+  border: 1px solid rgba(45, 106, 79, 0.12);
+}
+
+.feature-card h3 {
+  color: var(--paper);
+  font-weight: 600;
+  font-family: var(--font-fraunces), "Songti SC", serif;
+}
+
+.btn-cta {
+  background: var(--gradient);
+  color: var(--canopy);
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(212, 160, 23, 0.35);
+  transition: opacity 0.2s, box-shadow 0.2s;
+}
+
+.btn-cta:hover {
+  opacity: 0.94;
+  box-shadow: 0 6px 20px rgba(212, 160, 23, 0.42);
+}
+
+.glass-panel {
+  background: var(--ridge);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  box-shadow: var(--shadow);
+}
+
+@keyframes landing-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.landing-animate {
+  animation: landing-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.landing-animate-delay-1 { animation-delay: 0.07s; }
+.landing-animate-delay-2 { animation-delay: 0.14s; }
+.landing-animate-delay-3 { animation-delay: 0.21s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-animate,
+  .landing-animate-delay-1,
+  .landing-animate-delay-2,
+  .landing-animate-delay-3 { animation: none; }
+}

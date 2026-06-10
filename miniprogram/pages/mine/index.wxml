@@ -1,0 +1,44 @@
+<view class="page-sunlit page-with-tab">
+  <view class="sunlit-bg" aria-hidden="true"></view>
+
+  <view class="page-inner container">
+    <view class="mine-header">
+      <text class="mine-header-title">我的</text>
+      <text class="mine-header-hint">账号与使用统计</text>
+    </view>
+
+    <view class="profile card">
+      <view class="avatar-wrap">
+        <text class="avatar">⛰</text>
+      </view>
+      <text class="name">{{user.name || '未登录'}}</text>
+      <text class="meta" wx:if="{{user}}">ID: {{user.id}}</text>
+    </view>
+
+    <view class="card stats">
+      <view class="stat-item">
+        <text class="stat-num">{{tripCount}}</text>
+        <text class="stat-label">行程数</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{aiCount}}</text>
+        <text class="stat-label">AI 生成</text>
+      </view>
+    </view>
+
+  <navigator url="/pages/gear/index" class="card nav-card">
+    <text class="section-title">个人装备库</text>
+    <text class="about">管理常用装备，行程清单可快速选取</text>
+    <text class="nav-arrow">→</text>
+  </navigator>
+
+  <view class="card">
+    <text class="section-title">关于</text>
+      <text class="about">Trailpack 登山装备智能清单</text>
+      <text class="about">API: {{apiBase}}</text>
+    </view>
+
+    <button class="btn-secondary" bindtap="reLogin">重新登录</button>
+    <button class="btn-secondary logout" bindtap="logout">退出登录</button>
+  </view>
+</view>

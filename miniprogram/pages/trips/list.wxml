@@ -1,0 +1,44 @@
+<view class="page-sunlit page-with-tab">
+  <view class="sunlit-bg" aria-hidden="true"></view>
+
+  <view class="page-inner container">
+    <view class="list-header">
+      <text class="list-header-title">我的行程</text>
+      <text class="list-header-hint">一句话描述，生成专属装备清单</text>
+    </view>
+
+    <button class="btn-primary" bindtap="goNew">新建行程</button>
+    <text class="hint">长按行程可删除</text>
+
+    <view wx:if="{{loading && trips.length === 0}}" class="skeleton-wrap">
+      <view class="skeleton skeleton-lg"></view>
+      <view class="skeleton skeleton-block"></view>
+      <view class="skeleton skeleton-block"></view>
+    </view>
+
+    <view wx:elif="{{error}}" class="text-error" style="margin-top:32rpx">{{error}}</view>
+    <view wx:elif="{{!loading && trips.length === 0}}" class="empty">
+      <text>还没有行程，点击上方按钮创建</text>
+    </view>
+
+    <view
+      class="card trip-card"
+      wx:for="{{trips}}"
+      wx:key="id"
+      bindtap="goDetail"
+      bindlongpress="onLongPress"
+      data-id="{{item.id}}"
+      data-title="{{item.title}}"
+    >
+      <view class="trip-head">
+        <text class="trip-title">{{item.title}}</text>
+        <text class="tag tag-demo" wx:if="{{item.demoMode}}">演示</text>
+        <text class="tag tag-ai" wx:else>AI</text>
+      </view>
+      <text class="trip-desc">{{item.rawDescription}}</text>
+      <text class="trip-meta">
+        {{item.checklists.length ? '清单 v' + item.checklists[0].version : '未生成清单'}}
+      </text>
+    </view>
+  </view>
+</view>

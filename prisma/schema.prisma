@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  wechatOpenId  String?   @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?
+  accounts      Account[]
+  sessions      Session[]
+  trips         Trip[]
+  personalGear  PersonalGear[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model PersonalGear {
+  id             String          @id @default(cuid())
+  userId         String
+  name           String
+  category       String
+  note           String?
+  brand          String?
+  weightG        Int?
+  imageUrl       String?
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  checklistItems ChecklistItem[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([userId])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Trip {
+  id              String     @id @default(cuid())
+  userId          String
+  title           String
+  rawDescription  String
+  parsedRoute     String?
+  weatherSnapshot String?
+  riskNotes         String?
+  analysisNotes     String?
+  parseReasoning    String?
+  generateReasoning String?
+  demoMode          Boolean    @default(false)
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  checklists      Checklist[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model Checklist {
+  id          String           @id @default(cuid())
+  tripId      String
+  version     Int              @default(1)
+  trip        Trip             @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  items       ChecklistItem[]
+  assignments Assignment[]
+  createdAt   DateTime         @default(now())
+}
+
+model ChecklistItem {
+  id          String    @id @default(cuid())
+  checklistId String
+  name        String
+  category    String
+  priority    String
+  reason      String?
+  isShared    Boolean   @default(false)
+  checked     Boolean   @default(false)
+  owned           Boolean       @default(false)
+  personalGearId  String?
+  sortOrder       Int           @default(0)
+  checklist       Checklist     @relation(fields: [checklistId], references: [id], onDelete: Cascade)
+  personalGear    PersonalGear? @relation(fields: [personalGearId], references: [id], onDelete: SetNull)
+}
+
+model Assignment {
+  id          String    @id @default(cuid())
+  checklistId String
+  roleLabel   String
+  memberName  String?
+  itemIds     String
+  checklist   Checklist @relation(fields: [checklistId], references: [id], onDelete: Cascade)
+}

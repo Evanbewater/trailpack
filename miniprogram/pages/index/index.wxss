@@ -1,0 +1,311 @@
+.page {
+  position: relative;
+  padding: 24rpx 24rpx 0;
+  min-height: 100vh;
+  box-sizing: border-box;
+  background: #f7fbf4;
+}
+
+.ui-card {
+  position: relative;
+  z-index: 1;
+  background: rgba(255, 252, 245, 0.86);
+  border: 1rpx solid rgba(255, 255, 255, 0.72);
+  border-radius: 32rpx;
+  padding: 32rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 8rpx 28rpx rgba(27, 67, 50, 0.07);
+}
+
+.hero-card {
+  overflow: hidden;
+  padding-bottom: 40rpx;
+}
+
+.glass-sun::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(145deg, rgba(230, 184, 74, 0.2) 0%, transparent 42%);
+  border-radius: inherit;
+}
+
+.mountain-deco {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100rpx;
+  pointer-events: none;
+  opacity: 0.45;
+  background: linear-gradient(to top, rgba(45, 106, 79, 0.09), transparent);
+  clip-path: polygon(
+    0% 100%, 0% 60%,
+    8% 42%, 18% 56%,
+    30% 30%, 44% 50%,
+    58% 24%, 72% 44%,
+    86% 32%, 100% 52%,
+    100% 100%
+  );
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10rpx;
+  padding: 10rpx 20rpx;
+  border-radius: 999rpx;
+  background: rgba(232, 245, 214, 0.9);
+  border: 1rpx solid rgba(45, 106, 79, 0.14);
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #2d6a4f;
+}
+
+.badge-sun {
+  color: #d4a017;
+  font-size: 24rpx;
+}
+
+.headline {
+  display: block;
+  margin-top: 24rpx;
+  font-size: 48rpx;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #1b4332;
+  letter-spacing: -0.02em;
+}
+
+.headline.accent {
+  margin-top: 0;
+  color: #1b4332;
+}
+
+.headline.accent .gold {
+  color: #d4a017;
+}
+
+.lede {
+  display: block;
+  margin-top: 16rpx;
+  font-size: 28rpx;
+  line-height: 1.55;
+  color: #3d5248;
+}
+
+.trail-sign {
+  margin-top: 28rpx;
+  padding: 28rpx;
+  border-radius: 24rpx;
+  background: rgba(255, 252, 245, 0.95);
+  border: 1rpx solid rgba(212, 160, 23, 0.25);
+  box-shadow: 0 4rpx 20rpx rgba(27, 67, 50, 0.06);
+}
+
+.sign-label {
+  display: block;
+  font-size: 20rpx;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: #5c6b5a;
+}
+
+.sign-elev {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 72rpx;
+  font-weight: 600;
+  line-height: 1;
+  color: #1b4332;
+  letter-spacing: -0.03em;
+}
+
+.sign-unit {
+  display: block;
+  font-size: 24rpx;
+  color: #5c6b5a;
+  font-weight: 500;
+}
+
+.sign-rows {
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid rgba(27, 67, 50, 0.1);
+}
+
+.sign-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 24rpx;
+  color: #1b4332;
+  margin-bottom: 8rpx;
+}
+
+.sign-key {
+  color: #5c6b5a;
+}
+
+.cta-inline {
+  margin-top: 32rpx;
+  position: relative;
+  z-index: 2;
+}
+
+.cta-inline .btn-secondary {
+  margin-top: 16rpx;
+}
+
+.workflow-grid,
+.feature-grid {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.step-card,
+.feature-card {
+  background: rgba(255, 252, 245, 0.86);
+  border: 1rpx solid rgba(255, 255, 255, 0.72);
+  border-radius: 24rpx;
+  padding: 24rpx;
+  box-shadow: 0 4rpx 20rpx rgba(27, 67, 50, 0.06);
+}
+
+.step-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.step-marker {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #d4a017;
+}
+
+.step-icon {
+  font-size: 36rpx;
+}
+
+.step-label {
+  display: block;
+  margin-top: 16rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1b4332;
+}
+
+.step-desc {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  line-height: 1.5;
+  color: #5c6b5a;
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.card-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1b4332;
+}
+
+.card-hint {
+  display: block;
+  margin-top: 6rpx;
+  font-size: 24rpx;
+  color: #5c6b5a;
+}
+
+.card-badge {
+  font-size: 20rpx;
+  font-weight: 600;
+  color: #2d6a4f;
+  background: rgba(232, 245, 214, 0.9);
+  padding: 6rpx 14rpx;
+  border-radius: 10rpx;
+}
+
+.example-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16rpx;
+  background: rgba(255, 252, 245, 0.55);
+  padding: 20rpx;
+  border-radius: 20rpx;
+  border: 1rpx solid rgba(27, 67, 50, 0.08);
+  margin-bottom: 12rpx;
+}
+
+.example-row--hover {
+  border-color: rgba(212, 160, 23, 0.35);
+  background: rgba(255, 252, 245, 0.95);
+  box-shadow: 0 4rpx 16rpx rgba(27, 67, 50, 0.08);
+}
+
+.example-text {
+  flex: 1;
+  color: #3d5248;
+  font-size: 24rpx;
+  line-height: 1.5;
+}
+
+.example-action {
+  color: #d4a017;
+  font-size: 22rpx;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.feature-icon-wrap {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 20rpx;
+  background: rgba(232, 245, 214, 0.9);
+  border: 1rpx solid rgba(45, 106, 79, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feature-icon {
+  font-size: 36rpx;
+}
+
+.feature-title {
+  display: block;
+  margin-top: 20rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1b4332;
+}
+
+.feature-desc {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  line-height: 1.5;
+  color: #5c6b5a;
+}
+
+.footer {
+  position: relative;
+  z-index: 1;
+  display: block;
+  text-align: center;
+  margin-top: 32rpx;
+  font-size: 22rpx;
+}

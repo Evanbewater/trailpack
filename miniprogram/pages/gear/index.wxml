@@ -1,0 +1,184 @@
+<view class="page-sunlit">
+  <view class="sunlit-bg" aria-hidden="true"></view>
+
+  <view class="page-inner container">
+    <view class="head" wx:if="{{!pickMode}}">
+      <text class="title">个人装备库</text>
+      <text class="subtitle">共 {{gear.length}} 件 · 行程清单可快速选取</text>
+    </view>
+
+    <button wx:if="{{!pickMode}}" class="btn-primary" bindtap="openForm">添加装备</button>
+
+    <view class="card form-card" wx:if="{{showForm}}">
+      <text class="form-title">{{editingId ? '编辑装备' : '新装备'}}</text>
+
+      <view class="field">
+        <text class="field-label">装备图片（可选）</text>
+        <view class="image-upload">
+          <block wx:if="{{imagePreview}}">
+            <image class="gear-thumb" src="{{imagePreview}}" mode="aspectFill" />
+            <text class="image-remove" bindtap="removeImage">移除</text>
+          </block>
+          <view wx:else class="image-placeholder" bindtap="chooseImage">
+            <text class="image-placeholder-icon">+</text>
+            <text class="image-placeholder-text">添加图片</text>
+          </view>
+          <button
+            wx:if="{{!imagePreview}}"
+            class="btn-secondary image-pick-btn"
+            bindtap="chooseImage"
+            loading="{{uploadingImage}}"
+            disabled="{{uploadingImage}}"
+          >选择图片</button>
+        </view>
+        <text class="image-hint">JPG / PNG / WebP，最大 5MB</text>
+      </view>
+
+      <view class="field">
+        <text class="field-label">装备名称</text>
+        <view class="field-box">
+          <input
+            class="field-input"
+            placeholder="例如：冲锋衣、头灯"
+            placeholder-class="field-placeholder"
+            value="{{form.name}}"
+            data-field="name"
+            bindinput="onFormInput"
+          />
+        </view>
+      </view>
+
+      <view class="field">
+        <text class="field-label">分类</text>
+        <picker mode="selector" range="{{categories}}" value="{{categoryIndex}}" bindchange="onCategoryChange">
+          <view class="field-box field-picker">
+            <text class="picker-value">{{form.category}}</text>
+            <text class="picker-arrow">▾</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="field">
+        <text class="field-label">品牌（可选）</text>
+        <view class="field-box">
+          <input
+            class="field-input"
+            placeholder="例如：Arc'teryx"
+            placeholder-class="field-placeholder"
+            value="{{form.brand}}"
+            data-field="brand"
+            bindinput="onFormInput"
+          />
+        </view>
+      </view>
+
+      <view class="field">
+        <text class="field-label">重量（可选）</text>
+        <view class="field-box field-weight">
+          <input
+            class="field-input"
+            type="digit"
+            placeholder="例如：450"
+            placeholder-class="field-placeholder"
+            value="{{form.weight}}"
+            data-field="weight"
+            bindinput="onFormInput"
+          />
+          <text class="weight-unit">克 (g)</text>
+        </view>
+      </view>
+
+      <view class="field">
+        <text class="field-label">备注（可选）</text>
+        <view class="field-box">
+          <input
+            class="field-input"
+            placeholder="规格、适用场景等"
+            placeholder-class="field-placeholder"
+            value="{{form.note}}"
+            data-field="note"
+            bindinput="onFormInput"
+          />
+        </view>
+      </view>
+
+      <view class="form-actions">
+        <button class="btn-secondary mini" bindtap="closeForm">取消</button>
+        <button class="btn-primary mini" bindtap="submitForm" loading="{{loading}}">保存</button>
+      </view>
+      <text class="text-error form-error" wx:if="{{error}}">{{error}}</text>
+    </view>
+
+    <view wx:if="{{loading && gear.length === 0}}" class="skeleton-wrap">
+      <view class="skeleton skeleton-lg"></view>
+      <view class="skeleton skeleton-block"></view>
+    </view>
+
+    <view wx:elif="{{!loading && gear.length === 0}}" class="empty card">
+      <text wx:if="{{pickMode}}">没有可添加的个人装备</text>
+      <text wx:else>装备库还是空的，先添加常用装备吧</text>
+      <button wx:if="{{!pickMode}}" class="btn-secondary empty-btn" bindtap="openForm">添加第一件</button>
+    </view>
+
+    <block wx:else>
+      <scroll-view class="cat-tabs" scroll-x enable-flex wx:if="{{categoryStats.length > 1}}">
+        <view
+          class="cat-tab {{categoryFilter === 'all' ? 'active' : ''}}"
+          bindtap="setCategoryFilter"
+          data-filter="all"
+        >全部 {{gear.length}}</view>
+        <view
+          class="cat-tab {{categoryFilter === stat.category ? 'active' : ''}}"
+          wx:for="{{categoryStats}}"
+          wx:for-item="stat"
+          wx:key="category"
+          bindtap="setCategoryFilter"
+          data-filter="{{stat.category}}"
+        >{{stat.category}} {{stat.count}}</view>
+      </scroll-view>
+
+      <view class="card cat-block" wx:for="{{grouped}}" wx:key="category">
+        <view class="cat-head">
+          <text class="cat-title">{{item.category}}</text>
+          <text class="cat-count">{{item.count}} 件</text>
+        </view>
+        <view
+          class="gear-row {{pickMode && selectedIds.indexOf(gear.id) >= 0 ? 'selected' : ''}}"
+          wx:for="{{item.items}}"
+          wx:for-item="gear"
+          wx:key="id"
+          bindtap="{{pickMode ? 'togglePick' : ''}}"
+          data-id="{{gear.id}}"
+        >
+          <checkbox wx:if="{{pickMode}}" checked="{{selectedIds.indexOf(gear.id) >= 0}}" color="#d4a017" />
+          <image
+            wx:if="{{gear.imageFullUrl}}"
+            class="gear-list-thumb"
+            src="{{gear.imageFullUrl}}"
+            mode="aspectFill"
+          />
+          <view wx:else class="gear-list-thumb gear-list-thumb--empty">⛰</view>
+          <view class="gear-info">
+            <text class="gear-name">{{gear.name}}</text>
+            <text class="gear-meta text-muted" wx:if="{{gear.metaLine}}">{{gear.metaLine}}</text>
+          </view>
+          <view wx:if="{{!pickMode}}" class="gear-actions">
+            <text class="action-link" catchtap="openEdit" data-id="{{gear.id}}">编辑</text>
+            <text class="action-del" catchtap="deleteGear" data-id="{{gear.id}}" data-name="{{gear.name}}">删除</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <button
+      wx:if="{{pickMode}}"
+      class="btn-primary pick-btn"
+      bindtap="confirmPick"
+      disabled="{{selectedIds.length === 0 || loading}}"
+    >
+      添加 {{selectedIds.length}} 项到清单
+    </button>
+
+    <text class="text-error page-error" wx:if="{{error && !showForm}}">{{error}}</text>
+  </view>
+</view>
