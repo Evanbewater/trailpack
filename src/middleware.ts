@@ -6,6 +6,8 @@ export async function middleware(req: NextRequest) {
   const token = await getToken({
     req,
     secret: process.env.AUTH_SECRET,
+    // 生产 HTTPS 使用 __Secure-authjs.session-token，须与 Auth.js 一致
+    secureCookie: req.nextUrl.protocol === "https:",
   });
 
   if (!token) {
