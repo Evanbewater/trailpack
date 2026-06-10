@@ -7,9 +7,9 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const variants = {
   primary:
-    "bg-golden text-canopy hover:bg-[var(--golden-light)] font-bold shadow-sm transition-colors duration-200 cursor-pointer",
+    "bg-golden text-canopy hover:bg-[var(--golden-light)] font-bold shadow-sm cursor-pointer active:scale-[0.98] motion-reduce:active:scale-100",
   secondary:
-    "glass-subtle text-paper hover:bg-white/80 border border-[var(--line-subtle)] shadow-sm transition-colors duration-200 cursor-pointer",
+    "glass-subtle text-paper hover:bg-white/80 border border-[var(--line-subtle)] shadow-sm cursor-pointer active:scale-[0.98] motion-reduce:active:scale-100",
   ghost:
     "bg-transparent text-mist hover:bg-white/50 hover:text-paper transition-colors duration-200 cursor-pointer",
   danger:

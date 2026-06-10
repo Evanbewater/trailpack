@@ -2,9 +2,10 @@
 
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { deferAfterPaint, yieldToMain } from "@/lib/yield-to-main";
 
 type Props = {
   example?: string;
@@ -17,11 +18,10 @@ export function RegisterForm({ example }: Props) {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [, startTransition] = useTransition();
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
+  async function runRegister() {
+    await yieldToMain();
 
     const res = await fetch("/api/auth/register", {
       method: "POST",
@@ -41,18 +41,29 @@ export function RegisterForm({ example }: Props) {
       password,
       redirect: false,
     });
-    setLoading(false);
     if (signRes?.error) {
-      router.push("/login");
+      setLoading(false);
+      startTransition(() => router.push("/login"));
       return;
     }
 
-    if (example) {
-      router.push(`/trips/new?example=${encodeURIComponent(example)}`);
-    } else {
-      router.push("/dashboard");
-    }
-    router.refresh();
+    startTransition(() => {
+      if (example) {
+        router.push(`/trips/new?example=${encodeURIComponent(example)}`);
+      } else {
+        router.push("/dashboard");
+      }
+      router.refresh();
+    });
+  }
+
+  function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    deferAfterPaint(() => {
+      void runRegister();
+    });
   }
 
   return (

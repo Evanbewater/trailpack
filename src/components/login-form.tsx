@@ -2,9 +2,10 @@
 
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { deferAfterPaint, yieldToMain } from "@/lib/yield-to-main";
 
 export function LoginForm({ showGitHub = false }: { showGitHub?: boolean }) {
   const router = useRouter();
@@ -14,23 +15,41 @@ export function LoginForm({ showGitHub = false }: { showGitHub?: boolean }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [, startTransition] = useTransition();
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
+  const runLogin = useCallback(async () => {
+    await yieldToMain();
+
     const res = await signIn("credentials", {
       email,
       password,
       redirect: false,
     });
-    setLoading(false);
     if (res?.error) {
+      setLoading(false);
       setError("邮箱或密码错误");
       return;
     }
-    router.push(callbackUrl);
-    router.refresh();
+    startTransition(() => {
+      router.push(callbackUrl);
+      router.refresh();
+    });
+  }, [callbackUrl, email, password, router]);
+
+  function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    deferAfterPaint(() => {
+      void runLogin();
+    });
+  }
+
+  function onGitHubLogin() {
+    setLoading(true);
+    deferAfterPaint(() => {
+      void signIn("github", { callbackUrl });
+    });
   }
 
   return (
@@ -51,7 +70,12 @@ export function LoginForm({ showGitHub = false }: { showGitHub?: boolean }) {
           required
         />
         {error && <p className="text-sm text-red-600">{error}</p>}
-        <Button type="submit" className="w-full" disabled={loading}>
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={loading}
+          aria-busy={loading}
+        >
           {loading ? "登录中…" : "邮箱登录"}
         </Button>
       </form>
@@ -61,9 +85,11 @@ export function LoginForm({ showGitHub = false }: { showGitHub?: boolean }) {
             <span className="bg-white/60 px-2 backdrop-blur-sm">或</span>
           </div>
           <Button
+            type="button"
             variant="secondary"
             className="w-full"
-            onClick={() => signIn("github", { callbackUrl })}
+            disabled={loading}
+            onClick={onGitHubLogin}
           >
             使用 GitHub 登录
           </Button>
