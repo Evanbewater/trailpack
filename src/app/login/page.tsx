@@ -1,10 +1,24 @@
 import { LoginForm } from "@/components/login-form";
-import { isGitHubConfigured } from "@/lib/auth";
+import { auth, isGitHubConfigured } from "@/lib/auth";
+import { safeCallbackUrl } from "@/lib/safe-callback-url";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
-export default function LoginPage() {
+type Props = {
+  searchParams: Promise<{ callbackUrl?: string }>;
+};
+
+export default async function LoginPage({ searchParams }: Props) {
+  const session = await auth();
+  const { callbackUrl } = await searchParams;
+
+  if (session?.user) {
+    redirect(safeCallbackUrl(callbackUrl));
+  }
+
   const showGitHub = isGitHubConfigured();
+
   return (
     <div className="mx-auto max-w-md px-4 py-10">
       <div className="glass rounded-2xl p-6 sm:p-8">

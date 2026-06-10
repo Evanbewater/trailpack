@@ -1,21 +1,20 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useState, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
+import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { safeCallbackUrl } from "@/lib/safe-callback-url";
 import { deferAfterPaint, yieldToMain } from "@/lib/yield-to-main";
 
 export function LoginForm({ showGitHub = false }: { showGitHub?: boolean }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
+  const callbackUrl = safeCallbackUrl(searchParams.get("callbackUrl"));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [, startTransition] = useTransition();
 
   const runLogin = useCallback(async () => {
     await yieldToMain();
@@ -30,11 +29,10 @@ export function LoginForm({ showGitHub = false }: { showGitHub?: boolean }) {
       setError("邮箱或密码错误");
       return;
     }
-    startTransition(() => {
-      router.push(callbackUrl);
-      router.refresh();
-    });
-  }, [callbackUrl, email, password, router]);
+
+    // 整页跳转，避免 router.refresh 与 router.push 不同步导致仍停在登录框
+    window.location.assign(callbackUrl);
+  }, [callbackUrl, email, password]);
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();

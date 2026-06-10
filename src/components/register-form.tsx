@@ -1,8 +1,7 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { deferAfterPaint, yieldToMain } from "@/lib/yield-to-main";
@@ -12,13 +11,11 @@ type Props = {
 };
 
 export function RegisterForm({ example }: Props) {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [, startTransition] = useTransition();
 
   async function runRegister() {
     await yieldToMain();
@@ -43,18 +40,14 @@ export function RegisterForm({ example }: Props) {
     });
     if (signRes?.error) {
       setLoading(false);
-      startTransition(() => router.push("/login"));
+      window.location.assign("/login");
       return;
     }
 
-    startTransition(() => {
-      if (example) {
-        router.push(`/trips/new?example=${encodeURIComponent(example)}`);
-      } else {
-        router.push("/dashboard");
-      }
-      router.refresh();
-    });
+    const target = example
+      ? `/trips/new?example=${encodeURIComponent(example)}`
+      : "/dashboard";
+    window.location.assign(target);
   }
 
   function onSubmit(e: React.FormEvent) {
